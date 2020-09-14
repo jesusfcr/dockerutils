@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	registryServer = "containers.mpi-internal.com"
-	testImage      = "containers.mpi-internal.com/alpine:3.4"
+	registryServer = "registry.hub.docker.com"
+	testImage      = "docker.io/library/alpine:3.4"
 )
 
 func TestDockerIntegration(t *testing.T) {
@@ -56,8 +56,8 @@ func TestDockerIntegration(t *testing.T) {
 		if err := dc.Login(
 			ctx,
 			registryServer,
-			os.Getenv("ARTIFACTORY_USER"),
-			os.Getenv("ARTIFACTORY_PASSWORD"),
+			os.Getenv("DOCKER_USERNAME"),
+			os.Getenv("DOCKER_PASSWORD"),
 		); err != nil {
 			t.Fatalf("Login error: %v", err)
 		}
