@@ -136,3 +136,11 @@ func (c *Client) Logs(ctx context.Context, contID string, follow bool) (stdout, 
 
 	return bout.Bytes(), berr.Bytes(), nil
 }
+
+// WaitContainer blocks the calling the goroutine until a container with the
+// given ID finishes.
+func (c *Client) WaitContainer(ID string) error {
+	ctx := context.Background()
+	_, err := c.ContainerWait(ctx, ID)
+	return err
+}
