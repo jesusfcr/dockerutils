@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -58,14 +59,15 @@ func (c *Client) Login(ctx context.Context, server, username, password string) e
 
 // Pull pulls a container from docker registry.
 func (c *Client) Pull(ctx context.Context, imageRef string) error {
-	buf, err := json.Marshal(c.authConfig)
-	if err != nil {
-		return err
-	}
-	encodedAuth := base64.URLEncoding.EncodeToString(buf)
+	pullOpts := types.ImagePullOptions{}
 
-	pullOpts := types.ImagePullOptions{
-		RegistryAuth: encodedAuth,
+	if c.authConfig.ServerAddress != "" && strings.HasPrefix(imageRef, c.authConfig.ServerAddress) {
+		buf, err := json.Marshal(c.authConfig)
+		if err != nil {
+			return err
+		}
+		encodedAuth := base64.URLEncoding.EncodeToString(buf)
+		pullOpts.RegistryAuth = encodedAuth
 	}
 
 	respBody, err := c.ImagePull(ctx, imageRef, pullOpts)
